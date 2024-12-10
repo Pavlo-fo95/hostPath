@@ -1,19 +1,17 @@
-# Устанавливаем базовый образ с Python
-FROM python:3.11
+# Указываем базовый образ
+FROM python:3.10-slim
 
-# Устанавливаем рабочую директорию в контейнере
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем файл зависимостей и устанавливаем их
-COPY ./app/requirements.txt .
+# Копируем файлы проекта
+COPY . .
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+# Устанавливаем зависимости
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем все файлы из локальной директории в контейнер
-COPY ./app .
+# Указываем порт приложения
+EXPOSE 8000
 
-# Указываем порт, который будет использовать приложение внутри контейнера
-EXPOSE 3100
-
-# Устанавливаем команду запуска для Gunicorn
-CMD ["gunicorn", "main:app", "-c", "gunicorn.conf.py"]
+# Команда для запуска приложения
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
